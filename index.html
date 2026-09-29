@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TheGrevePictureLab · ANERBE — Executive Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0b0a; --bg2:#141311; --card:#1a1816; --card2:#211e1b; --line:#2e2a26;
+  --bone:#ece5d8; --muted:#a39b8e; --dim:#6f685e;
+  --accent:#b8893e; --accent-soft:rgba(184,137,62,.14); --warn:#c2593f;
+  --serif:"Cormorant Garamond", "Iowan Old Style", Garamond, Georgia, serif;
+  --sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:radial-gradient(ellipse at top,#1a1714 0%,var(--bg) 55%) fixed;color:var(--bone);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+h1,h2,h3,h4{font-family:var(--serif);font-weight:500;letter-spacing:.01em;margin:0 0 .4em;line-height:1.15}
+h1{font-size:2.6rem} h2{font-size:1.9rem} h3{font-size:1.4rem} h4{font-size:1.15rem}
+p{margin:0 0 .9em}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+/* header */
+header.top{position:sticky;top:0;z-index:20;background:rgba(12,11,10,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 0 6px;flex-wrap:wrap}
+.brand .co{font-family:var(--serif);font-size:1.35rem;letter-spacing:.14em;text-transform:uppercase}
+.brand .co b{color:var(--accent);font-weight:500}
+.brand .sub{color:var(--dim);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:0}
+nav.tabs button{background:none;border:0;color:var(--muted);font:600 .74rem/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;padding:12px 14px 13px;border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap}
+nav.tabs button:hover{color:var(--bone)}
+nav.tabs button.active{color:var(--bone);border-bottom-color:var(--accent)}
+nav.tabs .spacer{flex:1}
+nav.tabs .print{color:var(--dim)}
+main{padding:30px 0 70px}
+section.panel{display:none}
+section.panel.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+.eyebrow{font:600 .7rem/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.lede{color:var(--muted);max-width:760px}
+.card{background:linear-gradient(180deg,var(--card),var(--bg2));border:1px solid var(--line);border-radius:6px;padding:22px 24px;margin-bottom:20px}
+.card.hero{padding:34px 34px 28px;position:relative;overflow:hidden}
+.card.hero:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 85% 10%,rgba(184,137,62,.12),transparent 55%);pointer-events:none}
+.grid{display:grid;gap:20px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g-hero{grid-template-columns:2fr 1fr}
+@media(max-width:900px){.g2,.g3,.g-hero{grid-template-columns:1fr}h1{font-size:2.1rem}}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:.72rem;letter-spacing:.08em;color:var(--muted);margin:0 6px 6px 0;text-transform:uppercase}
+.pill.on{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.logline{font-family:var(--serif);font-size:1.4rem;line-height:1.4;font-style:italic;color:var(--bone);border-left:2px solid var(--accent);padding-left:18px;margin:18px 0}
+.muted{color:var(--muted)} .dim{color:var(--dim)} .small{font-size:.85rem}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px 14px;font-size:.9rem}
+.kv dt{color:var(--dim);text-transform:uppercase;letter-spacing:.1em;font-size:.72rem;padding-top:3px}
+.kv dd{margin:0}
+/* pipeline */
+.pipeline{display:flex;gap:0;margin:8px 0 4px;overflow-x:auto;padding-bottom:6px}
+.stage{flex:1;min-width:112px;position:relative;padding:34px 8px 0;text-align:center;font-size:.78rem;color:var(--dim)}
+.stage:before{content:"";position:absolute;top:13px;left:0;right:0;height:2px;background:var(--line)}
+.stage:first-child:before{left:50%} .stage:last-child:before{right:50%}
+.stage .dot{position:absolute;top:5px;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;border:2px solid var(--line);background:var(--bg);font-size:.65rem;line-height:14px;color:var(--bg)}
+.stage.done{color:var(--bone)} .stage.done:before{background:var(--accent)}
+.stage.done .dot{background:var(--accent);border-color:var(--accent);color:#1a1206;font-weight:700}
+.stage.now{color:var(--accent)} .stage.now .dot{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.stage .st{display:block;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;margin-top:2px;color:var(--dim)}
+ol.actions{list-style:none;counter-reset:a;padding:0;margin:0}
+ol.actions li{counter-increment:a;display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+ol.actions li:last-child{border:0}
+ol.actions li:before{content:counter(a);font-family:var(--serif);font-size:1.6rem;color:var(--accent);line-height:1;min-width:22px}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{padding:8px 0 8px 18px;border-bottom:1px solid var(--line);position:relative}
+ul.clean li:last-child{border:0}
+ul.clean li:before{content:"—";position:absolute;left:0;color:var(--accent)}
+.lock{font-size:.7rem;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;margin-left:6px}
+.shelf{border-style:dashed}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:600 .68rem/1.2 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.cat td{font-family:var(--serif);font-size:1.12rem;color:var(--accent);padding-top:16px;border-bottom:1px solid var(--accent-soft)}
+tr.sub td{color:var(--muted);font-style:italic}
+tr.total td{font-weight:700;border-top:2px solid var(--accent);font-size:.98rem}
+tr.hl td:first-child{border-left:2px solid var(--accent)}
+input[type=number],input[type=text]{background:var(--bg);border:1px solid var(--line);color:var(--bone);padding:5px 8px;border-radius:3px;font:inherit;font-variant-numeric:tabular-nums;width:130px;text-align:right}
+input:focus{outline:none;border-color:var(--accent)}
+input.edited{border-color:rgba(184,137,62,.6);background:#17130d}
+button.btn{background:var(--card2);color:var(--bone);border:1px solid var(--line);padding:8px 14px;border-radius:3px;font:600 .72rem/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+button.btn:hover{border-color:var(--accent)}
+button.btn.on{background:var(--accent);color:#1a1206;border-color:var(--accent)}
+.seg{display:inline-flex;gap:0;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{border:0;border-radius:0;border-right:1px solid var(--line)} .seg button:last-child{border-right:0}
+.placeholder{border:1px solid var(--warn);color:#e7b3a4;background:rgba(194,89,63,.1);padding:9px 14px;border-radius:4px;font:600 .72rem/1.4 var(--sans);letter-spacing:.12em;text-transform:uppercase;margin:0 0 16px}
+.tag-ph{display:inline-block;font:600 .6rem/1 var(--sans);letter-spacing:.12em;color:#e7b3a4;border:1px solid rgba(194,89,63,.6);padding:3px 6px;border-radius:2px;margin-left:6px;vertical-align:middle;text-transform:uppercase}
+.note{border-left:2px solid var(--accent);background:var(--accent-soft);padding:10px 14px;font-size:.88rem;color:var(--bone);margin:12px 0;border-radius:0 4px 4px 0}
+.note.warn{border-left-color:var(--warn);background:rgba(194,89,63,.08)}
+.teach{font-size:.9rem;color:var(--muted)}
+.teach b{color:var(--bone)}
+/* deck */
+.deck-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.dots{display:flex;gap:6px}
+.dots button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--muted);font-size:.72rem;cursor:pointer}
+.dots button.on{background:var(--accent);color:#1a1206;border-color:var(--accent)}
+.slide{display:none;aspect-ratio:16/9;background:#080707;border:1px solid var(--line);border-radius:6px;padding:4.2% 5.2%;position:relative;overflow:hidden}
+.slide.on{display:flex;flex-direction:column}
+.slide:after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%)}
+.slide .sn{position:absolute;top:18px;right:24px;font:600 .66rem/1 var(--sans);letter-spacing:.2em;color:var(--dim)}
+.slide h2{font-size:clamp(1.4rem,3vw,2.4rem)}
+.slide .foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-family:var(--serif);font-style:italic;color:var(--muted);font-size:clamp(.85rem,1.4vw,1.1rem);display:flex;justify-content:space-between;gap:12px}
+.slide .body{font-size:clamp(.72rem,1.25vw,.98rem);overflow:auto}
+.slide .title-big{font-family:var(--serif);font-size:clamp(3rem,9vw,7.2rem);letter-spacing:.2em;line-height:1;margin:auto 0 .2em;font-weight:400}
+.slide .tagline{font-family:var(--serif);font-style:italic;font-size:clamp(1rem,2.2vw,1.7rem);color:var(--bone)}
+.contract{font-family:var(--serif);border:1px solid #3a3228;background:linear-gradient(#17130e,#100d09);padding:12px 18px;max-width:340px;color:#cbbfa9;font-size:clamp(.72rem,1.2vw,.95rem);transform:rotate(-1.2deg);box-shadow:0 10px 30px rgba(0,0,0,.6)}
+.contract .ein{color:var(--accent);font-style:italic;font-size:1.35em;border-bottom:1px solid var(--accent);padding:0 8px}
+.slide ol,.slide ul{margin:0;padding-left:1.2em} .slide li{margin-bottom:.35em}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:4%}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:5%}
+/* treatment */
+.treat{max-width:760px;margin:0 auto}
+.treat h2{margin-top:1.6em;border-bottom:1px solid var(--line);padding-bottom:.25em}
+.treat h3{margin-top:1.3em;color:var(--accent)}
+.treat p{font-family:var(--serif);font-size:1.18rem;line-height:1.65;color:#ddd5c6}
+.treat .card p{font-family:var(--sans);font-size:.95rem}
+.titlecard{text-align:center;font-family:var(--serif);font-style:italic;font-size:1.3rem;padding:26px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:24px 0;color:var(--bone)}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 24px}
+.toc a{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--line);padding:4px 10px;border-radius:999px;color:var(--muted)}
+.toc a:hover{color:var(--accent);border-color:var(--accent)}
+details{border:1px dashed var(--line);border-radius:6px;padding:14px 20px;margin-top:30px;background:var(--bg2)}
+details summary{cursor:pointer;font-family:var(--serif);font-size:1.3rem;color:var(--accent)}
+.truth td:first-child{white-space:nowrap;color:var(--accent);font-family:var(--serif);font-size:1rem}
+.badge{font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:2px;border:1px solid var(--line);white-space:nowrap}
+.badge.doc{color:#b6c7a8;border-color:#56644b}.badge.inv{color:#e0b77a;border-color:#6b5230}.badge.mix{color:#c6b5d6;border-color:#5a4d66}
+/* budget */
+.bar{display:flex;height:46px;border-radius:4px;overflow:hidden;border:1px solid var(--line);margin:10px 0}
+.bar div{display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#140f08;font-weight:700;white-space:nowrap;overflow:hidden;transition:flex-grow .3s}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:.8rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.wf-step{display:grid;grid-template-columns:28px 1fr 130px 130px;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:.88rem}
+.wf-step .n{font-family:var(--serif);color:var(--accent);font-size:1.2rem}
+.wf-step .meter{grid-column:2/5;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+.wf-step .meter span{display:block;height:100%;background:var(--accent)}
+.wf-step.zero{opacity:.45}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px 18px}
+.form-grid label{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.82rem;color:var(--muted)}
+.form-grid input{width:120px}
+.gloss{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.gloss .card{margin:0;padding:16px 18px}
+.gloss h4{color:var(--accent);margin-bottom:.3em}
+.gloss p{font-size:.86rem;color:var(--muted);margin:0}
+.gloss .rep{margin-top:8px;font-size:.8rem;color:var(--bone);font-style:italic}
+footer.site{border-top:1px solid var(--line);padding:22px 0;color:var(--dim);font-size:.76rem;letter-spacing:.06em}
+.voice q{font-family:var(--serif);font-style:italic;font-size:1.08rem;color:var(--bone);display:block;margin-top:6px}
+.voice q:before{content:"“"}.voice q:after{content:"”"}
+/* print */
+.print-head{display:none}
+@media print{
+  @page{size:letter;margin:.55in}
+  body{background:#fff!important;color:#111;font-size:10.5pt}
+  header.top,nav.tabs,.deck-bar,.noprint,footer.site{display:none!important}
+  .print-head{display:block;font-family:var(--serif);font-size:10pt;letter-spacing:.14em;text-transform:uppercase;color:#555;border-bottom:1px solid #999;margin-bottom:12px;padding-bottom:4px}
+  main{padding:0}
+  section.panel{display:none!important}
+  section.panel.active{display:block!important;animation:none}
+  body.print-all section.panel{display:block!important;page-break-after:always;break-after:page}
+  .card,.slide,details{background:#fff!important;border-color:#bbb!important;color:#111;box-shadow:none;break-inside:avoid;page-break-inside:avoid}
+  .card.hero:before,.slide:after{display:none}
+  h1,h2,h3,h4,.logline,.treat p,.titlecard,.slide .tagline,.voice q{color:#111!important}
+  .muted,.dim,.teach,.lede,.gloss p,.slide .foot{color:#444!important}
+  .eyebrow,tr.cat td,.gloss h4,.treat h3,.lock,details summary,.stage.now{color:#7a5617!important}
+  .slide{display:flex!important;flex-direction:column;page-break-after:always;break-after:page;aspect-ratio:auto;min-height:6.4in;border:1px solid #999}
+  .slide .body{overflow:visible}
+  .contract{background:#f6f1e6!important;color:#222;box-shadow:none}
+  details{display:block}
+  details:not([open]) > *:not(summary){display:block!important}
+  input{border:0!important;background:transparent!important;color:#111!important;padding:0}
+  .placeholder{color:#8a2d18;border-color:#8a2d18;background:#fff}
+  .bar div{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .stage.done .dot,.pill.on{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  table{font-size:9pt} a{color:#111;text-decoration:none}
+  .grid{gap:10px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <div class="co">The<b>Greve</b>PictureLab</div>
+      <div class="sub">Executive view · 30,000 ft · Working title ANERBE</div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button data-tab="home" class="active">Big Picture</button>
+      <button data-tab="deck">Pitch Deck</button>
+      <button data-tab="treatment">Treatment</button>
+      <button data-tab="budget">Budget &amp; Finance</button>
+      <span class="spacer"></span>
+      <a class="print" href="https://screenwritersguide.grok.me" target="_blank" rel="noopener" title="Open the creative writers' bible" style="text-decoration:none;display:inline-flex;align-items:center">Writers' Bible ↗</a>
+      <button class="print" id="printTab" title="Print the current tab">Print tab</button>
+      <button class="print" id="printAll" title="Print every tab">Print all</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ BIG PICTURE ============ -->
+<section class="panel active" id="tab-home">
+  <div class="print-head">TheGrevePictureLab · Big Picture</div>
+  <div class="grid g-hero">
+    <div>
+      <div class="card hero">
+        <div class="eyebrow">Shelf A · Active project</div>
+        <h1 style="letter-spacing:.16em">ANERBE</h1>
+        <div class="muted" style="font-family:var(--serif);font-size:1.15rem;font-style:italic">North German: the one heir who takes the whole estate. Everyone else is paid to leave.</div>
+        <div style="margin:14px 0 4px">
+          <span class="pill on">Treatment · locked</span><span class="pill on">Pitch deck · locked</span><span class="pill on">Prologue · drafted</span><span class="pill">Screenplay · in discovery</span><span class="pill">Budget · draft</span>
+        </div>
+        <div class="logline">In 1656, a father signed away the price of saving his children and left it blank. Four centuries later, the one heir inherits a Michigan hotel and finds out who has been paying.</div>
+        <dl class="kv">
+          <dt>Genre</dt><dd>Supernatural domestic horror · slow dread, paperwork before apparitions</dd>
+          <dt>Theme</dt><dd><b>Who a family counts, and what it costs everyone it pays to leave.</b></dd>
+          <dt>Comps</dt><dd><i>The Haunting</i> (1963) · <i>Hereditary</i> · <i>The Others</i> · <i>The Exorcist</i> <span class="dim small">(tonal title references only)</span></dd>
+          <dt>Setting</dt><dd>Closed lumber-era hotel, Manistee, Michigan · one contained 1656 farmhouse room (Artland, Lower Saxony)</dd>
+          <dt>Scale</dt><dd>Micro-to-lean. One location + one period room, tiny cast. Sound design is the VFX budget.</dd>
+          <dt>Ask</dt><dd>Development partnership / first look · treatment → screenplay</dd>
+        </dl>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="eyebrow">Next 3 actions</div>
+        <ol class="actions">
+          <li><div><b>Draft June’s 3 a.m. call scene.</b><div class="small muted">She describes a room before he admits he’s standing in it. She says “people,” never “ghost.”</div></div></li>
+          <li><div><b>Rough draft Prologue + Act One.</b><div class="small muted">Hohn farmhouse, 1656 → the will → “a number by Friday.”</div></div></li>
+          <li><div><b>Firm up budget with real line-producer quotes.</b><div class="small muted">Replace every placeholder on the Budget tab with an estimate you can defend.</div></div></li>
+        </ol>
+      </div>
+      <div class="card shelf">
+        <div class="eyebrow">Shelf B · Safe-desk alternate</div>
+        <h3 style="letter-spacing:.06em">THE GREVE CIPHER</h3>
+        <p class="small muted" style="margin:0 0 8px">Spy / historical thriller. One-page treatment done. <b>No supernatural.</b> Kept entirely separate from ANERBE.</p>
+        <span class="pill on">One-pager · done</span><span class="pill">Parked</span>
+        <p class="small dim" style="margin:6px 0 0">Oslo, 1982: a spy-history writer finds a folder that cross-files two Greve disappearances. The name is cover; the file is the weapon.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">Pipeline · where ANERBE stands</div>
+    <div class="pipeline" id="pipeline"></div>
+    <p class="teach small" style="margin-top:12px"><b>How a finance rep reads this:</b> money follows risk reduction. A locked treatment and deck get meetings; a screenplay plus a defensible budget gets development money; attached director/cast (“packaging”) is what unlocks pre-sales and equity at scale.</p>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <div class="eyebrow">Notes / Decisions log</div>
+      <ul class="clean">
+        <li>No possession on camera. No entity shown — no faces, silhouettes, or changed voices.<span class="lock">Locked</span></li>
+        <li>Scare target: <b>Yellow</b> — white-knuckle, seat-clutching, not walkout.<span class="lock">Locked</span></li>
+        <li>Living people appear only as fictional composites.<span class="lock">Locked</span></li>
+        <li><i>The Greve Cipher</i> is kept separate — no crossover, no supernatural.<span class="lock">Locked</span></li>
+        <li>Working ending: Ellis gives the house away. Tragic alternate stays in the drawer.<span class="lock">Locked</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="eyebrow">Writer’s rules (from the bible)</div>
+      <ul class="clean">
+        <li>The horror is the rule, not the dead.</li>
+        <li>If a character explains the Bargain, the scene is wrong. Write dialogue from want, not lore.</li>
+        <li>Don’t skip the disposition — it’s where the film says what the climax meant.</li>
+        <li>Documented history stays documented; the haunting is ours. Don’t tell a buyer a place fact a map hasn’t confirmed.</li>
+        <li>One scene at a time. Don’t open the next century while this page is empty.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PITCH DECK ============ -->
+<section class="panel" id="tab-deck">
+  <div class="print-head">TheGrevePictureLab · ANERBE Pitch Deck</div>
+  <div class="deck-bar">
+    <div><div class="eyebrow" style="margin:0">Pitch deck · 8 slides</div><span class="small dim">Arrow keys ← → to navigate</span></div>
+    <div class="dots" id="dots"></div>
+    <div><button class="btn" id="prev">‹ Prev</button> <button class="btn" id="next">Next ›</button></div>
+  </div>
+  <div id="slides">
+    <div class="slide on"><span class="sn">01 / 08</span>
+      <div class="eyebrow">TheGrevePictureLab presents</div>
+      <div class="cols2" style="align-items:center;flex:1">
+        <div>
+          <div class="title-big">ANERBE</div>
+          <div class="tagline">The one heir who takes the whole estate. Everyone else is paid to leave.</div>
+          <p class="muted" style="margin-top:14px;font-size:clamp(.72rem,1.2vw,.95rem)">A supernatural domestic horror · TheGrevePictureLab</p>
+        </div>
+        <div style="display:flex;justify-content:center">
+          <div class="contract">
+            <div style="text-align:center;letter-spacing:.2em;font-size:.8em;color:#8d806b">ANNO 1656</div>
+            <p style="margin:.5em 0">…for the keeping of my three children, I grant in payment</p>
+            <p style="margin:.5em 0;text-align:center"><span class="ein">Einer</span></p>
+            <p style="margin:.5em 0;font-size:.85em;color:#8d806b">— Thomas Greve, his hand</p>
+          </div>
+        </div>
+      </div>
+      <div class="foot"><span>Four hundred years. One heir. A hotel that still counts.</span></div>
+    </div>
+
+    <div class="slide"><span class="sn">02 / 08</span>
+      <div class="eyebrow">Logline &amp; hook</div>
+      <h2 style="font-style:italic;max-width:90%;margin-top:4%">“In 1656, a father signed away the price of saving his children and left it blank. Four centuries later, the one heir inherits a Michigan hotel and finds out who has been paying.”</h2>
+      <div class="body" style="margin-top:3%"><p><b style="color:var(--accent)">The hook:</b> the scares come from paperwork, names, and counts — before anything you can see. A register. A passenger list. A line of type. A number that is wrong by one.</p></div>
+      <div class="foot"><span>ANERBE</span><span>TheGrevePictureLab</span></div>
+    </div>
+
+    <div class="slide"><span class="sn">03 / 08</span>
+      <div class="eyebrow">Tone &amp; comps</div>
+      <h2>Slow dread. Suggestion over spectacle.</h2>
+      <div class="body cols2" style="margin-top:2%">
+        <ul>
+          <li><b><i>The Haunting</i> (1963)</b> — the house as character; sound does the work.</li>
+          <li><b><i>Hereditary</i></b> — the family is the haunting.</li>
+        </ul>
+        <ul>
+          <li><b><i>The Others</i></b> — the house has rules.</li>
+          <li><b><i>The Exorcist</i></b> — spiritual stakes, without its effects budget.</li>
+        </ul>
+      </div>
+      <p class="body" style="margin-top:3%;color:var(--accent);font-family:var(--serif);font-size:clamp(1rem,1.8vw,1.4rem)">No CGI demons. No possession.</p>
+      <div class="foot"><span>Comps are tonal references, not performance claims.</span><span>ANERBE</span></div>
+    </div>
+
+    <div class="slide"><span class="sn">04 / 08</span>
+      <div class="eyebrow">The engine</div>
+      <div class="body">
+        <ol>
+          <li><b>Bargain.</b> 1656: three children kept, one heir, the price left blank. It fills itself: <i>Einer</i>.</li>
+          <li><b>Name.</b> The yielded are cut off. The adversary collects on the sound, not the spelling — Greve → Graves.</li>
+          <li><b>Count.</b> Exactly one living Greve may be in the house.</li>
+          <li><b>Ward.</b> A German rite hidden in a Manistee newspaper is the lock. 1917 breaks it.</li>
+          <li><b>Counterforce.</b> Submit, then resist. The spoken Word outranks the contract.</li>
+        </ol>
+      </div>
+      <h2 style="margin-top:auto;font-style:italic;color:var(--accent)">The horror is the rule, not the dead.</h2>
+      <div class="foot"><span>ANERBE</span><span>TheGrevePictureLab</span></div>
+    </div>
+
+    <div class="slide"><span class="sn">05 / 08</span>
+      <div class="eyebrow">Characters</div>
+      <div class="body cols" style="margin-top:2%">
+        <div><h3>ELLIS GRAVES, 63</h3><p>Hotel broker. <b>Wants</b> an asset number by Friday. <b>Needs</b> to stop deciding who keeps the property.</p></div>
+        <div><h3>JUNE GRAVES</h3><p>His sister, paid in cash. Dreams of “people” at her door. <b>Needs</b> to be counted, not settled.</p></div>
+        <div><h3>THE HOTEL</h3><p>A closed lumber-era hotel in Manistee, MI. A table set for one. A basement print shop, mid-job.</p></div>
+      </div>
+      <div class="foot"><span>Living people = fictional composites only.</span><span>ANERBE</span></div>
+    </div>
+
+    <div class="slide"><span class="sn">06 / 08</span>
+      <div class="eyebrow">Five beats</div>
+      <div class="body">
+        <ol>
+          <li><b>Prologue.</b> 1656: the contract, the silent child, the count. Then the will — hotel to Ellis, cash to June.</li>
+          <li><b>Rising.</b> Registers, passenger lists, a galley ending on June’s name, a chest of clippings.</li>
+          <li><b>Midpoint.</b> The 3 a.m. call. Two living Greves. The yielded are family; the Bargain is the monster.</li>
+          <li><b>Climax.</b> The print shop. One word changed. The Ward braided with Scripture. The door opens on nothing.</li>
+          <li><b>Disposition.</b> He gives the house away. The table is finally long enough. The dread stays unresolved.</li>
+        </ol>
+      </div>
+      <div class="foot"><span>Tragic alternate in the drawer.</span><span>ANERBE</span></div>
+    </div>
+
+    <div class="slide"><span class="sn">07 / 08</span>
+      <div class="eyebrow">Trailer moments</div>
+      <div class="body cols2">
+        <ul>
+          <li>Three children breathing as one — then one goes silent.</li>
+          <li>A blank in a contract that fills itself.</li>
+          <li>A table set for one; the chairs somehow full.</li>
+          <li>A galley of type ending on his sister’s name.</li>
+          <li>A 3 a.m. call describing his room.</li>
+        </ul>
+        <ul>
+          <li>A voicemail in his voice — then his father’s.</li>
+          <li>A register signed under every generation.</li>
+          <li>Clippings that share only a sound.</li>
+          <li>A door that breathes.</li>
+        </ul>
+      </div>
+      <div class="foot"><span>Every beat is sound, paper, or a room. Nothing with a face.</span><span>ANERBE</span></div>
+    </div>
+
+    <div class="slide"><span class="sn">08 / 08</span>
+      <div class="eyebrow">Why this · how it gets made</div>
+      <div class="body cols2">
+        <div>
+          <h3>Why</h3>
+          <p>The audience leaves counting the people they’ve cut out of their own families.</p>
+          <h3>The ask</h3>
+          <p>Development partnership / first look. Treatment → screenplay.</p>
+        </div>
+        <div>
+          <h3>Filmable lean</h3>
+          <ul>
+            <li>One hotel + one contained 1656 room.</li>
+            <li>Tiny cast.</li>
+            <li>Period via documents and sound.</li>
+            <li>No possession or creature effects.</li>
+            <li>Budget micro-to-lean. Sound design is the VFX budget.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot"><span>TheGrevePictureLab · Working title ANERBE</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TREATMENT ============ -->
+<section class="panel" id="tab-treatment">
+  <div class="print-head">TheGrevePictureLab · ANERBE Mini-Treatment</div>
+  <div class="treat">
+    <div class="eyebrow">Mini-treatment · locked</div>
+    <h1 style="letter-spacing:.14em">ANERBE</h1>
+    <div class="toc noprint">
+      <a href="#t-log">Logline</a><a href="#t-tone">Tone &amp; method</a><a href="#t-rules">Rule set</a><a href="#t-chars">Characters</a><a href="#t-story">Story</a><a href="#t-prod">Production frame</a><a href="#t-theme">Theme</a><a href="#t-hist">History ledger</a><a href="#t-cipher">Shelf B</a>
+    </div>
+
+    <h2 id="t-log">Logline</h2>
+    <p><i>In 1656, a farmer signed a contract to save his three children and left the price blank. Four hundred years later, a retired hotel broker inherits a shuttered lumber-era hotel in Michigan, the only heir as always, and learns that everyone the family paid to leave never left. The contract is still counting.</i></p>
+
+    <h2 id="t-tone">Tone &amp; method</h2>
+    <p>Slow dread. Paperwork before apparitions. The hotel is the monster. We never show an entity — no faces, no silhouettes, no possessions, no changed voices. Period history arrives as felt documents: contracts, church registers, passenger lists, newspaper pages. The target is seat-clutching, not walkout.</p>
+
+    <h2 id="t-rules">Rule set</h2>
+    <h3>1 · The Bargain</h3>
+    <p>In 1656, to keep his three children, Thomas Greve signs a contract and leaves the price blank. It fills itself: <i>Einer</i> — one. One heir stays and takes everything. All the others must <i>weichen</i> — yield, give way, leave. The farm survives when the village does not. The price is the plot.</p>
+    <h3>2 · The Name</h3>
+    <p>Those who yield are cut from the name. Men who marry onto another estate take that estate’s name. The adversary collects on the sound, not the spelling: Greve can become Graves and still be owed.</p>
+    <h3>3 · The Count</h3>
+    <p>The house must hold exactly one living Greve. The yielded stand outside and grow by generation. Two living Greves means the count is wrong.</p>
+    <h3>4 · The Ward</h3>
+    <p>A German rite, passed mouth to mouth, keeps them at the threshold. In Manistee it hides in a German weekly — classifieds, church notices, a serial — printed by a judge who disguises it as news. Language is the lock. The loophole that isn’t: Americanizing the family in 1917–18 takes the language out of print, and the lock comes off.</p>
+    <h3>5 · The Counterforce</h3>
+    <p>Submit, then resist. The spoken Word outranks the written contract. The only thing older than the Bargain is what it was made in defiance of.</p>
+    <p style="font-style:italic;color:var(--accent)">The horror is the rule, not the dead.</p>
+
+    <h2 id="t-chars">Characters</h2>
+    <div class="grid g3 voice">
+      <div class="card"><h4>Ellis Graves, 63</h4><p>Retired hotel broker. <b>Wants</b> an asset number by Friday. <b>Needs</b> to stop deciding who keeps the property. Short, hotel language; calls dread a liability; when afraid, talks about beams, title, and reopening costs.<q>It’s a closed box. Roof, boiler, a newspaper in the basement. I’ll have a number by Friday.</q></p></div>
+      <div class="card"><h4>June Graves</h4><p>His estranged sister, paid in cash. Dreams of “people” at her door. <b>Needs</b> to be counted, not settled. She never says “ghost.”<q>Don’t tell me I’m dreaming a hallway you’ve just walked into.</q></p></div>
+      <div class="card"><h4>The Hotel</h4><p>A closed lumber-era hotel in Manistee, Michigan. A table set for one. A basement print shop, mid-job, type still set for a German weekly. The body of the Bargain.</p></div>
+    </div>
+    <p class="small dim" style="font-family:var(--sans)">All present-day characters are invented. Living people appear only as fictional composites. The Manistee judge is a fictional use of a documented kind of man (immigrant editor, justice, German weekly) — not a private biography.</p>
+
+    <h2 id="t-story">Story</h2>
+    <div class="titlecard">1648. The peace is signed. In Lower Saxony, the whole farm goes to one heir.<br>The others are paid, and sent away.</div>
+
+    <h3>Prologue — Hohn farmhouse, Artland, 1656</h3>
+    <p>Night. Thomas Greve sits across from an empty stool. The lord will take his children at Martinmas. He writes terms and leaves the price blank. Behind the curtain, his three children’s breathing falls into unison — then one drops out. All three are alive. One breathes without sound.</p>
+    <p>On the page, the blank fills itself in his own ink: <i>Einer.</i> He signs. At dawn the bailiff rides past the farm without stopping. Thomas stands at the bed and counts. <i>Eins. Zwei. Drei.</i></p>
+    <p style="text-align:center;letter-spacing:.3em">SMASH TO TITLE.</p>
+
+    <h3>Act One — Inheritance</h3>
+    <p>Ellis Graves, 63, inherits the family hotel alone. June gets cash. He reads the clause and doesn’t notice the shape. The hotel is an asset to be valued: registers back to 1892, a boiler, a roof — and in the basement, type still set for a German weekly. The last name on the galley is his sister’s.</p>
+
+    <h3>Act Two A — A Ledger</h3>
+    <p>The past arrives as documents, one era at a time. Badbergen parish registers whose numbers don’t add up. An 1847 Twistel passenger list: one Greve boards; none arrive. A clerk corrects Greve to Graves. A Manistee judge who prints a Ward disguised as news. A torn page from 1917.</p>
+    <p>Then a chest of clippings: a Count, the Place de Grève, a poet who faked his death, a geologist drowned on a coal claim. Ellis wrongly decides all Greves are one blood. The truth is worse: the adversary collects on the <i>name</i>.</p>
+
+    <h3>Act Two B — The Count</h3>
+    <p>June arrives. At 3 a.m. she calls and describes his room before he admits he is standing in it. There are two living Greves in the house. Guest-book entries appear in his hand. He can’t say his own name.</p>
+    <p><b>Midpoint:</b> the yielded are every child paid off, married out, dead young. They are the family. The thing keeping them out is the horror — and Ellis has brokered that arrangement his whole life.</p>
+
+    <h3>Act Three — Yielding</h3>
+    <p>The print shop. Ellis sets the Ward one last time, in German he barely remembers, braided with spoken Scripture — <i>“Submit yourselves therefore to God. Resist the devil, and he will flee from you”</i> (James 4:7). He changes the word that expelled to the word that admits. The door flexes and opens. Nothing is shown. Upstairs, every chair fills with sound.</p>
+
+    <h3>Disposition</h3>
+    <p>The count is no longer one. He gives the house away. June stands in the doorway — alive, counted, not paid off. No new heir named. No button of music: room tone, then the length of the table, finally long enough. We do not resolve whether that is mercy or whether the dead have simply been let in. That unknown is the scare.</p>
+    <p class="small dim" style="font-family:var(--sans)">Tragic alternate (in the drawer): the house takes Ellis, June is spared, a new name appears in his handwriting, the press starts another run. Use only if the earned ending goes soft.</p>
+
+    <h2 id="t-prod">Production frame</h2>
+    <p>One hotel and one contained 1656 room. A tiny cast. Period carried by documents and sound rather than crowds and streets. No possession or creature effects. Budget micro-to-lean; the sound design is the VFX budget.</p>
+
+    <h2 id="t-theme">Theme</h2>
+    <p>Every family decides who it counts. <i>ANERBE</i> asks what that costs the people it pays to leave — and leaves the audience counting the people they’ve cut out of their own families.</p>
+
+    <h2 id="t-hist">History ledger — documented vs. invented</h2>
+    <p class="small muted" style="font-family:var(--sans)">Carried from the writers’ bible. Keep this straight in every buyer conversation.</p>
+    <table class="truth">
+      <tr><th>Era</th><th>Use</th><th>Rule</th></tr>
+      <tr><td>1648</td><td><span class="badge doc">Documented frame</span></td><td>The Peace of Westphalia is real. Don’t claim the farm’s distance from the signing unless a map says so; Hohn is a dramatic place-name until sourced.</td></tr>
+      <tr><td>1656 · Hohn</td><td><span class="badge inv">Invented</span></td><td>Thomas Greve’s contract, the empty stool, the silent child — all fiction.</td></tr>
+      <tr><td>1777 · Badbergen</td><td><span class="badge mix">Documented / haunted</span></td><td>Parish handwriting is neutral; the numbers that don’t add up are ours.</td></tr>
+      <tr><td>1846–47 · Twistel</td><td><span class="badge mix">Documented / haunted</span></td><td>An estate name swallowed by marriage. The empty house is the film’s reading, not a deed.</td></tr>
+      <tr><td>1881–1892 · Manistee</td><td><span class="badge doc">Documented public life</span></td><td>Mills, a German weekly, a justice who marries people. The Ward and the night court are invented. Keep private descendants out.</td></tr>
+      <tr><td>1917–18</td><td><span class="badge doc">Documented pressure</span></td><td>German-language papers go quiet in the war years. The Ward failing is the fiction built on that fact.</td></tr>
+      <tr><td>Present</td><td><span class="badge inv">Invented</span></td><td>Ellis, June, the hotel as body of the Bargain, every supernatural beat. Living relatives stay composites.</td></tr>
+    </table>
+
+    <details id="t-cipher">
+      <summary>Shelf B · The Greve Cipher (one-pager)</summary>
+      <div style="margin-top:12px">
+        <p class="small muted" style="font-family:var(--sans)">Spy / historical thriller · safe-desk alternate · <b>no supernatural</b> · separate from ANERBE.</p>
+        <p><b>Cold open.</b> Manistee, present day. Ellis finds a bundle of Greve clippings in the inherited hotel safe.</p>
+        <p><b>Oslo, 1982.</b> Tim Greve, writing <i>Spionjakt i Norge</i>, finds a folder that cross-files two cases: the 1872 Ombilin coal-field drowning of geologist Willem Hendrik de Greve, and Felix Paul Greve’s 1909 faked suicide and reinvention as Frederick Philip Grove.</p>
+        <p><b>End.</b> A tradecraft rhyme: the name is cover; the file is the weapon.</p>
+        <p><b>Set pieces.</b> The hotel safe · the river claim · the suicide note and the steamer.</p>
+        <p class="small dim" style="font-family:var(--sans)">Historical names are real public figures — verify every biographical fact against sources before it goes in a pitch.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ============ BUDGET & FINANCE ============ -->
+<section class="panel" id="tab-budget">
+  <div class="print-head">TheGrevePictureLab · ANERBE Budget &amp; Finance (illustrative)</div>
+  <div class="eyebrow">Budget &amp; finance · the teaching tab</div>
+  <h1>Think like a finance rep.</h1>
+  <p class="lede">A buyer or investor reads three things: <b>what it costs</b> (top sheet), <b>who puts money in</b> (capital stack), and <b>who gets money out, in what order</b> (recoupment waterfall). Your hotel-finance instincts transfer: it’s a capital stack with a priority of payments.</p>
+  <div class="placeholder">ILLUSTRATIVE PLACEHOLDER — not a quote; replace with line-producer estimates. Mechanics below are common industry patterns, not legal or financial advice.</div>
+
+  <!-- (a) Top sheet -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <div><div class="eyebrow">(a) Top sheet</div><h2 style="margin:0">Budget scenario</h2></div>
+      <div class="noprint" style="display:flex;gap:10px;flex-wrap:wrap">
+        <div class="seg" id="scen">
+          <button class="btn" data-s="micro">Micro ~$250K</button>
+          <button class="btn" data-s="lean">Lean ~$1M</button>
+          <button class="btn" data-s="low">Low ~$3M</button>
+        </div>
+        <button class="btn" id="resetBudget" title="Restore default allocations for this scenario">Reset</button>
+      </div>
+    </div>
+    <p class="teach" style="margin-top:12px">Edit any dollar cell; totals recalculate live and are saved in this browser. <b>Contingency</b> is 10% of the subtotal. Allocations are illustrative for a contained indie horror with one main location — note the outsized <b>sound design &amp; mix</b> line, because sound is this film’s VFX budget.</p>
+    <div style="overflow-x:auto">
+    <table id="topsheet">
+      <thead><tr><th>Account</th><th class="num">% of subtotal</th><th class="num">Amount (USD) <span class="tag-ph">Placeholder</span></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <div class="note"><b>Completion bond:</b> a guarantee to financiers that the film will be delivered on budget. Often quoted around ~2–3% of the budget, and typically required on larger budgets; micro productions frequently go without one. Not included in the total above — ask the line producer and financiers whether it applies.</div>
+  </div>
+
+  <!-- (b) Capital stack -->
+  <div class="card">
+    <div class="eyebrow">(b) Capital stack</div>
+    <h2>Who puts the money in</h2>
+    <p class="teach">The capital stack is every source that together covers the budget. Senior (safer, repaid first) sources sit at the bottom of the risk; equity takes the most risk and gets the upside. <b>Hotel analogy:</b> senior debt, mezzanine, sponsor equity — same logic, different collateral (here the collateral is distribution rights and incentives).</p>
+    <div class="form-grid noprint" id="stackInputs"></div>
+    <div class="bar" id="stackBar"></div>
+    <div class="legend" id="stackLegend"></div>
+    <p class="small" id="stackStatus" style="margin-top:10px"></p>
+    <div class="grid g2" style="margin-top:8px">
+      <div class="teach"><p><b>Equity</b> — investor cash for ownership of the film’s profits. Highest risk, recoups after debt, usually with a premium.</p><p><b>Soft money / tax incentive</b> — rebates, credits, or grants from a jurisdiction for spending locally. Often cash-flowed by a lender before it is paid out.</p></div>
+      <div class="teach"><p><b>Pre-sales / gap</b> — pre-sales are distribution deals signed before the film exists (the contract can be borrowed against); gap is a loan against the estimated value of territories not yet sold. Usually needs packaging.</p><p><b>Deferments</b> — fees cast/crew/vendors agree to take later, out of revenue. They reduce cash needed but sit in the waterfall.</p></div>
+    </div>
+    <div class="note warn"><b>Verify:</b> Michigan’s state film-incentive history is uncertain — programs have been created, ended, and proposed again over the years. Confirm current status, rates, caps, and eligibility with the Michigan film office or a production accountant before counting any soft money from Michigan. Other jurisdictions (for the 1656 room, for example) may be an alternative.</div>
+  </div>
+
+  <!-- (c) Waterfall -->
+  <div class="card">
+    <div class="eyebrow">(c) Recoupment waterfall</div>
+    <h2>Who gets paid out, in what order</h2>
+    <p class="teach">Money flows down in priority. Each tier fills before anything spills to the next. Common pattern: <b>gross receipts → distribution fees &amp; expenses → sales agent → collection account → debt/gap repaid → equity recoups (often with a 100%–120% total return of principal, i.e. principal plus a ~0–20% premium) → deferments → net profits split</b> (commonly 50/50 investors/producers). Exact order and rates are negotiated deal-by-deal.</p>
+    <div class="form-grid noprint" id="wfInputs"></div>
+    <div id="wfOut" style="margin-top:16px"></div>
+    <p class="small dim" style="margin-top:10px">Simplified model: fees are applied to receipts at each stage; real deals include cross-collateralization, caps on expenses, and MG offsets. For intuition only.</p>
+  </div>
+
+  <!-- (d) Glossary -->
+  <div class="eyebrow" style="margin-top:28px">(d) Glossary · speak the language</div>
+  <div class="gloss" id="gloss"></div>
+</section>
+</main>
+
+<footer class="site"><div class="wrap">TheGrevePictureLab · Working title ANERBE · Confidential development material. All budget and finance figures are illustrative placeholders. Comps are tonal title references only.</div></footer>
+
+<script>
+(function(){
+'use strict';
+var LS = {get:function(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},
+          set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+var $ = function(s,r){return (r||document).querySelector(s);};
+var $$ = function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+var fmt = function(n){return '$'+Math.round(n).toLocaleString('en-US');};
+
+/* ---------- Tabs ---------- */
+function showTab(id){
+  if(!document.getElementById('tab-'+id)) id='home';
+  $$('section.panel').forEach(function(p){p.classList.toggle('active',p.id==='tab-'+id);});
+  $$('nav.tabs button[data-tab]').forEach(function(b){b.classList.toggle('active',b.dataset.tab===id);});
+  if(location.hash!=='#'+id) history.replaceState(null,'','#'+id);
+  window.scrollTo(0,0);
+}
+$$('nav.tabs button[data-tab]').forEach(function(b){b.addEventListener('click',function(){showTab(b.dataset.tab);});});
+window.addEventListener('hashchange',function(){showTab(location.hash.slice(1));});
+$('#printTab').addEventListener('click',function(){document.body.classList.remove('print-all');window.print();});
+$('#printAll').addEventListener('click',function(){document.body.classList.add('print-all');window.print();setTimeout(function(){document.body.classList.remove('print-all');},500);});
+
+/* ---------- Pipeline ---------- */
+var stages=[['Concept','done'],['Treatment','done'],['Pitch deck','done'],['Budget','now','draft'],['Screenplay','','first draft'],['Packaging','','director / cast'],['Financing',''],['Pre-production','']];
+$('#pipeline').innerHTML=stages.map(function(s){
+  return '<div class="stage '+s[1]+'"><span class="dot">'+(s[1]==='done'?'✓':'')+'</span>'+s[0]+(s[2]?'<span class="st">'+s[2]+'</span>':(s[1]==='done'?'<span class="st">done</span>':''))+'</div>';
+}).join('');
+
+/* ---------- Deck ---------- */
+var slides=$$('#slides .slide'), cur=0;
+$('#dots').innerHTML=slides.map(function(_,i){return '<button data-i="'+i+'">'+(i+1)+'</button>';}).join('');
+function go(i){cur=(i+slides.length)%slides.length;slides.forEach(function(s,j){s.classList.toggle('on',j===cur);});
+  $$('#dots button').forEach(function(b,j){b.classList.toggle('on',j===cur);});}
+$$('#dots button').forEach(function(b){b.addEventListener('click',function(){go(+b.dataset.i);});});
+$('#prev').addEventListener('click',function(){go(cur-1);});
+$('#next').addEventListener('click',function(){go(cur+1);});
+document.addEventListener('keydown',function(e){
+  if(!$('#tab-deck').classList.contains('active')||/INPUT|TEXTAREA/.test(e.target.tagName))return;
+  if(e.key==='ArrowRight')go(cur+1); if(e.key==='ArrowLeft')go(cur-1);});
+go(0);
+
+/* ---------- Top sheet ---------- */
+var SCEN={micro:{label:'Micro',total:250000},lean:{label:'Lean',total:1000000},low:{label:'Low',total:3000000}};
+var CATS=[
+ {name:'Above-the-line (ATL)',items:[
+  ['story','Story / rights & screenplay',4],['prod','Producers',4],['dir','Director',4],['cast','Principal cast',8]]},
+ {name:'Below-the-line — production',items:[
+  ['crew','Crew (production staff & departments)',15],['cge','Camera / grip / electric',9],['art','Art dept & set dressing (hotel + 1656 room)',9],
+  ['loc','Location fees',4],['ward','Wardrobe / period costume',2.5],['hmu','Hair / makeup',1.5],['trans','Transportation / lodging',4],['cater','Catering',3]]},
+ {name:'Post-production',items:[
+  ['edit','Editorial',5],['sound','Sound design & mix  ★ the VFX budget',8],['music','Music / score',3],['color','Color',2],['vfx','Minimal VFX (cleanup only)',1],['deliv','Deliverables',2]]},
+ {name:'Other',items:[
+  ['ins','Insurance (incl. E&O)',4],['legal','Legal',3.5],['acct','Accounting',1.5],['fest','Festival / marketing materials',2]]}
+];
+var CONT=0.10;
+var scen=LS.get('grl.scen','lean');
+var edits=LS.get('grl.edits',{});
+function base(s){return SCEN[s].total/(1+CONT);}
+function val(s,key,pct){var e=edits[s]&&edits[s][key];return (e!=null&&!isNaN(e))?e:Math.round(base(s)*pct/100/100)*100;}
+function renderSheet(){
+  $$('#scen button').forEach(function(b){b.classList.toggle('on',b.dataset.s===scen);});
+  var rows=[],sub=0,catTotals=[];
+  CATS.forEach(function(c,ci){
+    var ct=0; c.items.forEach(function(it){ct+=val(scen,it[0],it[2]);}); catTotals.push(ct);
+  });
+  sub=catTotals.reduce(function(a,b){return a+b;},0);
+  CATS.forEach(function(c,ci){
+    rows.push('<tr class="cat"><td colspan="3">'+c.name+'</td></tr>');
+    c.items.forEach(function(it){
+      var v=val(scen,it[0],it[2]); var ed=edits[scen]&&edits[scen][it[0]]!=null;
+      rows.push('<tr'+(it[0]==='sound'?' class="hl"':'')+'><td>'+it[1].replace('★','<span style="color:var(--accent)">★</span>')+'</td><td class="num dim">'+(sub?(v/sub*100).toFixed(1):'0')+'%</td><td class="num"><input type="number" min="0" step="500" data-k="'+it[0]+'" value="'+v+'"'+(ed?' class="edited"':'')+'></td></tr>');
+    });
+    rows.push('<tr class="sub"><td>Subtotal — '+c.name+'</td><td class="num">'+(sub?(catTotals[ci]/sub*100).toFixed(1):0)+'%</td><td class="num">'+fmt(catTotals[ci])+'</td></tr>');
+  });
+  var cont=sub*CONT;
+  rows.push('<tr class="sub"><td><b>Subtotal (ATL + BTL + Post + Other)</b></td><td></td><td class="num"><b>'+fmt(sub)+'</b></td></tr>');
+  rows.push('<tr><td>Contingency (10% of subtotal)</td><td class="num dim">10.0%</td><td class="num">'+fmt(cont)+'</td></tr>');
+  rows.push('<tr class="total"><td>TOTAL — '+SCEN[scen].label+' scenario <span class="tag-ph">Illustrative placeholder</span></td><td></td><td class="num">'+fmt(sub+cont)+'</td></tr>');
+  rows.push('<tr><td class="dim">Completion bond (if required, ~2–3%) — shown for reference, not in total</td><td class="num dim">~2–3%</td><td class="num dim">'+fmt((sub+cont)*0.02)+' – '+fmt((sub+cont)*0.03)+'</td></tr>');
+  $('#topsheet tbody').innerHTML=rows.join('');
+  $$('#topsheet input').forEach(function(inp){
+    inp.addEventListener('change',function(){
+      var n=parseFloat(inp.value); edits[scen]=edits[scen]||{};
+      if(isNaN(n)||n<0) delete edits[scen][inp.dataset.k]; else edits[scen][inp.dataset.k]=n;
+      LS.set('grl.edits',edits); renderSheet(); renderStack();
+    });
+  });
+  window.__budgetTotal=sub+cont;
+}
+function budgetTotal(){return window.__budgetTotal||SCEN[scen].total;}
+$$('#scen button').forEach(function(b){b.addEventListener('click',function(){scen=b.dataset.s;LS.set('grl.scen',scen);renderSheet();renderStack();});});
+$('#resetBudget').addEventListener('click',function(){delete edits[scen];LS.set('grl.edits',edits);renderSheet();renderStack();});
+
+/* ---------- Capital stack ---------- */
+var STACK=[['equity','Equity',0.55,'#b8893e'],['soft','Soft money / tax incentive (verify)',0.15,'#8c7a5b'],['presale','Pre-sales / gap',0.20,'#6e7f86'],['defer','Deferments',0.10,'#8a5a4e']];
+var stackEdits=LS.get('grl.stack',{});
+function sdef(k,p){if(k!=='equity')return Math.round(budgetTotal()*p/1000)*1000;var o=0;STACK.forEach(function(s){if(s[0]!=='equity')o+=Math.round(budgetTotal()*s[2]/1000)*1000;});return Math.round(budgetTotal()-o);}
+function sval(k,p){var e=stackEdits[scen]&&stackEdits[scen][k];return (e!=null)?e:sdef(k,p);}
+function renderStack(){
+  var tot=budgetTotal();
+  $('#stackInputs').innerHTML=STACK.map(function(s){return '<label>'+s[1]+'<input type="number" min="0" step="1000" data-k="'+s[0]+'" value="'+sval(s[0],s[2])+'"></label>';}).join('')+
+    '<label style="grid-column:1/-1;justify-content:flex-start"><button class="btn" id="resetStack" type="button">Reset stack to budget</button></label>';
+  var vals=STACK.map(function(s){return sval(s[0],s[2]);}), sum=vals.reduce(function(a,b){return a+b;},0);
+  var gap=tot-sum, denom=Math.max(sum,tot);
+  $('#stackBar').innerHTML=STACK.map(function(s,i){var w=vals[i]/denom*100;return w>0?'<div style="flex:'+w+' 0 0;background:'+s[3]+'" title="'+s[1]+': '+fmt(vals[i])+'">'+(w>9?Math.round(vals[i]/sum*100)+'%':'')+'</div>':'';}).join('')+
+    (gap>0?'<div style="flex:'+(gap/denom*100)+' 0 0;background:repeating-linear-gradient(45deg,#2a2622,#2a2622 6px,#1a1816 6px,#1a1816 12px);color:#e7b3a4">'+(gap/denom>0.08?'Unfunded':'')+'</div>':'');
+  $('#stackLegend').innerHTML=STACK.map(function(s,i){return '<span><i style="background:'+s[3]+'"></i>'+s[1]+' · '+fmt(vals[i])+'</span>';}).join('');
+  $('#stackStatus').innerHTML='Stack total <b>'+fmt(sum)+'</b> vs. budget <b>'+fmt(tot)+'</b> — '+
+    (Math.abs(gap)<1?'<span style="color:#b6c7a8">fully covered.</span>':gap>0?'<span style="color:#e7b3a4">'+fmt(gap)+' still unfunded (the “gap” you must close).</span>':'<span style="color:#e0b77a">'+fmt(-gap)+' over-subscribed.</span>')+
+    ' <span class="tag-ph">Illustrative placeholder</span>';
+  $$('#stackInputs input').forEach(function(inp){inp.addEventListener('change',function(){
+    var n=parseFloat(inp.value); stackEdits[scen]=stackEdits[scen]||{};
+    if(isNaN(n)||n<0) delete stackEdits[scen][inp.dataset.k]; else stackEdits[scen][inp.dataset.k]=n;
+    LS.set('grl.stack',stackEdits); renderStack(); });});
+  $('#resetStack').addEventListener('click',function(){delete stackEdits[scen];LS.set('grl.stack',stackEdits);renderStack();});
+  wfSyncDefaults();
+}
+
+/* ---------- Waterfall ---------- */
+var WF=[
+ ['gross','Hypothetical gross receipts ($)',3000000,1000],
+ ['distFee','Distribution fee (% of gross)',30,1],
+ ['distExp','Distribution expenses / P&A ($)',400000,1000],
+ ['saFee','Sales agent fee (% of remittance)',15,1],
+ ['saExp','Sales agent expenses ($)',50000,1000],
+ ['cam','Collection account fee (%)',1,0.5],
+ ['debt','Debt / gap to repay ($, incl. interest)',0,1000],
+ ['equity','Equity invested ($)',0,1000],
+ ['prem','Equity premium (%, e.g. 20 = 120%)',20,1],
+ ['defer','Deferments ($)',0,1000],
+ ['split','Investors’ share of net profits (%)',50,1]
+];
+var wf=LS.get('grl.wf',{});
+function wfSyncDefaults(){
+  var stackVals={}; STACK.forEach(function(s){stackVals[s[0]]=sval(s[0],s[2]);});
+  WF.forEach(function(w){ if(wf[w[0]]==null){
+    if(w[0]==='debt') w[2]=Math.round(stackVals.presale*1.1);
+    if(w[0]==='equity') w[2]=stackVals.equity;
+    if(w[0]==='defer') w[2]=stackVals.defer;
+  }});
+  renderWF();
+}
+function g(k){var w=WF.filter(function(x){return x[0]===k;})[0];return (wf[k]!=null)?wf[k]:w[2];}
+function renderWF(){
+  var box=$('#wfInputs');
+  box.innerHTML=WF.map(function(w){return '<label>'+w[1]+'<input type="number" min="0" step="'+w[3]+'" data-k="'+w[0]+'" value="'+g(w[0])+'"></label>';}).join('')+
+    '<label style="grid-column:1/-1;justify-content:flex-start;gap:10px"><button class="btn" id="wfLink" type="button">Pull debt / equity / deferments from capital stack</button><span class="dim small">Scenario: '+SCEN[scen].label+'</span></label>';
+  $$('#wfInputs input').forEach(function(inp){inp.addEventListener('change',function(){
+    var n=parseFloat(inp.value); if(isNaN(n)||n<0) delete wf[inp.dataset.k]; else wf[inp.dataset.k]=n; LS.set('grl.wf',wf); renderWF();});});
+  $('#wfLink').addEventListener('click',function(){delete wf.debt;delete wf.equity;delete wf.defer;LS.set('grl.wf',wf);wfSyncDefaults();});
+  var gross=g('gross'), left=gross, steps=[];
+  function take(name,amt,note){amt=Math.max(0,Math.min(left,amt));left-=amt;steps.push([name,amt,left,note]);}
+  take('Distribution fee',gross*g('distFee')/100,'Distributor’s cut of gross, off the top.');
+  take('Distribution expenses (P&A etc.)',g('distExp'),'Marketing & delivery costs the distributor recoups.');
+  var remit=left;
+  take('Sales agent fee',remit*g('saFee')/100,'Commission on money the sales agent collects.');
+  take('Sales agent expenses',g('saExp'),'Markets, materials — often capped by contract.');
+  take('Collection account (CAM) fee',left*g('cam')/100,'Neutral account that receives and disburses per the waterfall.');
+  take('Debt / gap lender repaid',g('debt'),'Senior money: lenders are repaid before equity.');
+  take('Equity recoupment ('+(100+g('prem'))+'%)',g('equity')*(1+g('prem')/100),'Investors get principal back plus premium.');
+  take('Deferments paid',g('defer'),'Deferred fees owed to cast/crew/vendors.');
+  var net=left, inv=net*g('split')/100;
+  steps.push(['Net profits — investors ('+g('split')+'%)',inv,net-inv,'Investors’ backend share.']);
+  steps.push(['Net profits — producers ('+(100-g('split'))+'%)',net-inv,0,'Producers’ pool (from which talent backend is often paid).']);
+  var eqOwed=g('equity')*(1+g('prem')/100), eqPaid=steps[6][1];
+  var html='<div class="wf-step" style="border-bottom:1px solid var(--accent)"><span></span><b>Gross receipts in</b><span class="num" style="text-align:right"><b>'+fmt(gross)+'</b></span><span class="dim small" style="text-align:right">remaining</span></div>';
+  steps.forEach(function(s,i){
+    html+='<div class="wf-step'+(s[1]<=0?' zero':'')+'" title="'+s[3]+'"><span class="n">'+(i+1)+'</span><span>'+s[0]+'<br><span class="dim small">'+s[3]+'</span></span><span style="text-align:right">'+fmt(s[1])+'</span><span class="dim" style="text-align:right">'+fmt(s[2])+'</span><div class="meter"><span style="width:'+(gross?s[1]/gross*100:0)+'%"></span></div></div>';
+  });
+  var verdict = g('equity')===0?'':(eqPaid>=eqOwed-0.5?'<span style="color:#b6c7a8">Equity fully recouped with premium.</span>':'<span style="color:#e7b3a4">Equity recovers '+fmt(eqPaid)+' of '+fmt(eqOwed)+' owed ('+(eqOwed?Math.round(eqPaid/eqOwed*100):0)+'%).</span>');
+  html+='<div class="note" style="margin-top:14px">Investors receive in total <b>'+fmt(eqPaid+inv)+'</b> on '+fmt(g('equity'))+' invested. '+verdict+' <span class="tag-ph">Hypothetical</span></div>';
+  $('#wfOut').innerHTML=html;
+}
+
+/* ---------- Glossary ---------- */
+var GL=[
+ ['Top sheet','One-page summary of a budget by category (ATL, BTL, post, other) with totals. It’s the page financiers read first.','Rep move: know your total, your contingency, and your biggest line cold.'],
+ ['ATL / BTL','Above-the-line: creative principals negotiated up front — writer/rights, producers, director, principal cast. Below-the-line: everything else — crew, equipment, locations, post.','Rep move: ATL share tells a buyer how “packaged” the film is.'],
+ ['Contingency','A reserve, commonly ~10% of the budget, for overruns. Bond companies and financiers usually expect it.','Rep move: never cut contingency to make the number look smaller.'],
+ ['Completion bond','A guarantee to financiers that the film will be finished and delivered; the bond company can step in if it goes off the rails. Often ~2–3% of budget, typically on larger budgets.','Rep move: ask early whether your financiers will require one.'],
+ ['E&O insurance','Errors & omissions: covers claims over rights, titles, defamation, likeness. Distributors typically require it for delivery.','Rep move: composites and a clean chain of title keep E&O simple — relevant to ANERBE’s real-history elements.'],
+ ['Pre-sales','Selling distribution rights in specific territories before the film is made. The contract can be taken to a bank as collateral.','Rep move: pre-sales usually need recognizable cast or director attached.'],
+ ['Gap financing','A loan against the estimated value of unsold territories, based on sales-agent estimates. Riskier, so more expensive than pre-sale lending.','Rep move: think mezzanine debt — priced for the risk.'],
+ ['Soft money','Non-equity, non-debt funding: tax credits, rebates, grants, incentives. Reduces the investors’ risk.','Rep move: always verify the incentive is live and your spend qualifies.'],
+ ['Recoupment','Investors getting their money back — often with a premium — out of revenues, in the order set by the waterfall.','Rep move: “When do I get paid back?” is question #1. Answer it with the waterfall.'],
+ ['Backend','Participation in profits after recoupment (net profits). Talent and producers often take backend in exchange for lower upfront fees.','Rep move: be precise about whose backend comes from which pool.'],
+ ['First-look','A deal giving a company the first right to consider (and usually fund development of) a creator’s projects, often with overhead or development money.','Rep move: this is ANERBE’s stated ask — a development partnership.'],
+ ['MG (minimum guarantee)','An advance a distributor pays for rights in a territory, recouped from that territory’s revenue before overages flow back.','Rep move: an MG on paper can be bankable before the film is shot.'],
+ ['Collection account management (CAM)','An independent company that receives all revenues and pays every party per the agreed waterfall, for a small fee.','Rep move: investors trust a CAM more than a producer-controlled bank account.']
+];
+$('#gloss').innerHTML=GL.map(function(x){return '<div class="card"><h4>'+x[0]+'</h4><p>'+x[1]+'</p><p class="rep">'+x[2]+'</p></div>';}).join('');
+
+renderSheet(); renderStack();
+showTab((location.hash||'#home').slice(1));
+document.documentElement.setAttribute('data-ok','1');
+})();
+</script>
+</body>
+</html>
